@@ -29,14 +29,14 @@ fn hash_cmp(a: String, b: String) -> (bool, String) {
         for i in 0..a.len() {
             cmp_char = b.chars().nth(i).unwrap();
             if a.chars().nth(i).unwrap() != cmp_char {
-                cmp_marker = format!("{}\033[34m{}\033[0m", cmp_marker, cmp_char); 
+                cmp_marker = format!("{}\x1b[31m{}\x1b[0m", cmp_marker, cmp_char); 
                 is_equal = false;
             } else {
                 cmp_marker = format!("{}{}", cmp_marker, cmp_char);
             }
         }
        
-        let result = format!("{}\n{}", a, b);
+        let result = format!("{}\n{}", a, cmp_marker);
         return (is_equal, result);
     }
 }
@@ -53,9 +53,9 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     let (is_equal, msg) = hash_cmp(hash_a, hash_b);
     if is_equal {
-        println!("The hash values are equal!");
+        println!("\x1b[32mThe hash values are equal.\x1b[0m");
     } else {
-        println!("The hash values are not equal!\n{}", msg);
+        println!("The hash values are not equal:\n{}", msg);
     }
 
     Ok(())
