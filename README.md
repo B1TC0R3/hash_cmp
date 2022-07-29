@@ -9,3 +9,7 @@ Calculate and compare hash values quickly and easily
 ```bash
 ./hash-cmp <file path> <hash>
 ```
+
+## Example
+![image](https://user-images.githubusercontent.com/77125551/181832423-ce7a3095-a982-4710-86b7-a1d19cbf2692.png)
+
