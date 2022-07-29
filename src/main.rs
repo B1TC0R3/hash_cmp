@@ -20,7 +20,7 @@ fn check_args(args: Vec<String>) -> Result<(), Box<dyn Error>>{
 fn main() -> Result<(), Box<dyn Error>>{
     let args: Vec<String> = env::args().collect();
     match check_args(args) {
-        Err(e) => return Error(),
+        Err(e) => return Err(e),
         _ => {}
     }
 
