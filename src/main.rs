@@ -1,4 +1,5 @@
 use std::env;
+use std::process;
 use std::error::Error;
 
 fn print_help() {
@@ -6,13 +7,13 @@ fn print_help() {
 }
 
 fn check_args(args: Vec<String>) -> Result<(), Box<dyn Error>>{
-    if args.len() == 2 && args[1] == "-h" {
+    if args[1] == "-h" {
         print_help();
-        return Ok(());
+        process::exit(0);
+    }
 
-    } else if args.len() == 4 {
+    if args.len() == 4 {
         return Ok(());
-
     }
     Err("Invalid Arguments!".into())
 }
