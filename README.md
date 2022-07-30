@@ -7,7 +7,7 @@ Calculate and compare hash values quickly and easily
 
 ## How to use
 ```bash
-./sha-cmp [optional: -q (quiet mode)] <file path> <hash>
+./sha-cmp [optional: -q (quiet mode)] <file path> <expected hash>
 ```
 
 ## Exit codes
