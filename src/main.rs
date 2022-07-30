@@ -2,8 +2,32 @@ use std::{env, process, fs};
 use std::error::Error;
 use sha2::{Sha256, Digest};
 
+enum ExitCode {
+    HashEqual = 0,
+    HashNotEqual = 99,
+}
+
+struct CmpResult {
+    msg: String,
+    file_hash: String,
+    expected_hash: String,
+}
+
 fn print_help() {
-    println!("Usage: sha-cmp <method> <input-file> <sha>");
+    println!("Usage: hash-cmp [optional: -q] <input-file> <expected hash>");
+    println!("Parameters:");
+    println!("  -q: quiet mode");
+}
+
+fn print_verbose(cmp_result: CmpResult) {
+    println!("{}", cmp_result.msg);
+    println!("Found   :: {}", cmp_result.file_hash);
+    println!("Expected:: {}", cmp_result.expected_hash);
+}
+
+fn print_quiet(cmp_result: CmpResult) {
+    println!("{}", cmp_result.file_hash);
+    println!("{}", cmp_result.expected_hash);
 }
 
 fn parse_args(mut args: Vec<String>) -> Result<(String, String), Box<dyn Error>>{
@@ -12,7 +36,7 @@ fn parse_args(mut args: Vec<String>) -> Result<(String, String), Box<dyn Error>>
         process::exit(0);
     }
 
-    if args.len() == 3 {
+    if args.len() >= 3 {
         return Ok((args.pop().unwrap(), 
                    args.pop().unwrap())); 
     }
@@ -28,9 +52,13 @@ fn get_file_hash256(path: String) -> String {
     format!("{:x}", hash256)
 }
 
-fn hash_cmp(a: String, b: String) -> (bool, String) {
+fn hash_cmp(a: String, b: String) -> Result<CmpResult, CmpResult> {
     if a.len() != b.len() {
-        return (false, "Hash values are not equal in length.".to_string());
+        Err(CmpResult {
+            msg: "Hash lengths do not match!".to_string(),
+            file_hash: a,
+            expected_hash: b,
+        })
     } else {
         let mut is_equal: bool = true;
         let mut cmp_marker: String = String::new();
@@ -46,8 +74,19 @@ fn hash_cmp(a: String, b: String) -> (bool, String) {
             }
         }
 
-        let result = format!("{}\n{}", a, cmp_marker);
-        return (is_equal, result);
+        if is_equal {
+            Ok(CmpResult {
+                msg: "Hashes are equal!".to_string(),
+                file_hash: a,
+                expected_hash: b,
+            })
+        } else {
+            Err(CmpResult {
+                msg: "Hashes are not equal!".to_string(),
+                file_hash: a,
+                expected_hash: b,
+            })
+        }
     }
 }
 
@@ -58,18 +97,26 @@ fn main() -> Result<(), Box<dyn Error>>{
 
     match parse_args(args) {
         Err(e) => return Err(e),
-        Ok((hash_a, hash_b)) => {
-            file_hash = hash_a;
-            expected_hash = hash_b;
+        Ok((hash, file_path)) => {
+            file_hash = get_file_hash256(file_path);
+            expected_hash = hash;
         }
     }
 
-    let (is_equal, msg) = hash_cmp(file_hash, expected_hash);
-    if is_equal {
-        println!("\x1b[32mThe hash values are equal.\x1b[0m");
-    } else {
-        println!("Found inconsistency:\n{}", msg);
+    match hash_cmp(file_hash, expected_hash) {
+        Ok(msg) => {
+            match env::var("-q") {
+                Ok(_) => print_quiet(msg),
+                Err(_) => print_verbose(msg),
+            }
+            process::exit(ExitCode::HashEqual as i32);
+        },
+        Err(msg) => {
+            match env::var("-q") {
+                Ok(_) => print_quiet(msg),
+                Err(_) => print_verbose(msg),
+            }
+            process::exit(ExitCode::HashNotEqual as i32);
+        }
     }
-
-    Ok(())
 }
