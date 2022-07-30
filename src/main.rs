@@ -1,4 +1,4 @@
-use std::{env, process, fs};
+use std::{env, process, fs, io};
 use std::error::Error;
 use sha2::{Sha256, Digest};
 
@@ -54,8 +54,8 @@ fn parse_args(mut args: Vec<String>) -> Result<(String, String, bool), Box<dyn E
 
 fn get_file_hash256(path: String) -> String {
     let mut hasher = Sha256::new();
-    let mut file_content = fs::read_to_string(path).expect("Failed to read file");
-    hasher.update(&mut file_content);
+    let mut file = fs::File::open(path).unwrap();
+    io::copy(&mut file, &mut hasher).unwrap();
     let hash256 = hasher.finalize();
 
     format!("{:x}", hash256)
