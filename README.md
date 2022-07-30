@@ -7,15 +7,25 @@ Calculate and compare hash values quickly and easily
 
 ## How to use
 ```bash
-./sha-cmp <file path> <hash>
+./sha-cmp -h
+./sha-cmp [optional: -q (quiet mode)] <file path> <expected hash>
 ```
 
+## Exit codes
+- **0**: Hashes are equal
+- **255**: Hashes are not equal
+
 ## Example
-![image](https://user-images.githubusercontent.com/77125551/181832423-ce7a3095-a982-4710-86b7-a1d19cbf2692.png)
+### Verbose mode
+![image](https://user-images.githubusercontent.com/77125551/181935043-354dbbfe-8d2d-4494-bd4b-b6786328c5e0.png)
+
+### Quiet mode
+![image](https://user-images.githubusercontent.com/77125551/181935057-8e907067-6e49-4664-87f7-89b72c9221ad.png)
+
 
 ## Roadmap
+- Support multiple hash functions
 - Automatically figure out suitable hash-functions based on hash length
-- Run trough multiple hash functions and describe differences
 - optimized source code
 - a man page
 
