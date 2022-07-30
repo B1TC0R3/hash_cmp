@@ -17,10 +17,10 @@ Calculate and compare hash values quickly and easily
 
 ## Example
 ### Verbose mode
-![image](https://user-images.githubusercontent.com/77125551/181935043-354dbbfe-8d2d-4494-bd4b-b6786328c5e0.png)
+![image](https://user-images.githubusercontent.com/77125551/181935367-3dd1910d-70be-4a01-80c7-9bd893a4682e.png)
 
 ### Quiet mode
-![image](https://user-images.githubusercontent.com/77125551/181935057-8e907067-6e49-4664-87f7-89b72c9221ad.png)
+![image](https://user-images.githubusercontent.com/77125551/181935391-d6f9275c-9bd8-4af5-b302-f50bb641d7a3.png)
 
 
 ## Roadmap
