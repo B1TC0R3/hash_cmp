@@ -24,8 +24,8 @@ Calculate and compare hash values quickly and easily
 
 
 ## Roadmap
+- Support multiple hash functions
 - Automatically figure out suitable hash-functions based on hash length
-- Run trough multiple hash functions and describe differences
 - optimized source code
 - a man page
 
