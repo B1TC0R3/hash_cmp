@@ -7,7 +7,7 @@ Calculate and compare hash values quickly and easily
 
 ## How to use
 ```bash
-./hash-cmp <file path> <hash>
+./sha-cmp <file path> <hash>
 ```
 
 ## Example
