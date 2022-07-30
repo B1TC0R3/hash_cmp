@@ -6,14 +6,15 @@ fn print_help() {
     println!("Usage: sha-cmp <method> <input-file> <sha>");
 }
 
-fn check_args(args: Vec<String>) -> Result<(), Box<dyn Error>>{
+fn parse_args(mut args: Vec<String>) -> Result<(String, String), Box<dyn Error>>{
     if args[1] == "-h" {
         print_help();
         process::exit(0);
     }
 
     if args.len() == 3 {
-        return Ok(());
+        return Ok((args.pop().unwrap(), 
+                   args.pop().unwrap())); 
     }
     Err("Invalid Arguments!".into())
 }
@@ -52,15 +53,18 @@ fn hash_cmp(a: String, b: String) -> (bool, String) {
 
 fn main() -> Result<(), Box<dyn Error>>{
     let args: Vec<String> = env::args().collect();
-    match check_args(args.clone()) {
+    let file_hash: String;
+    let expected_hash: String;
+
+    match parse_args(args) {
         Err(e) => return Err(e),
-        _ => {}
+        Ok((hash_a, hash_b)) => {
+            file_hash = hash_a;
+            expected_hash = hash_b;
+        }
     }
 
-    let hash_a: String = get_file_hash256(args[1].clone());
-    let hash_b: String = args[2].clone();
-
-    let (is_equal, msg) = hash_cmp(hash_a, hash_b);
+    let (is_equal, msg) = hash_cmp(file_hash, expected_hash);
     if is_equal {
         println!("\x1b[32mThe hash values are equal.\x1b[0m");
     } else {
