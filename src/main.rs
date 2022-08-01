@@ -4,12 +4,20 @@ use sha2::{Digest, Sha256};
 use std::error::Error;
 use std::{env, fs, io, process};
 
+const COLOR_RED: &str = "\x1b[31m";
+const COLOR_WHITE: &str = "\x1b[0m";
+
 enum ExitCode {
     HashEqual = 0,
     HashNotEqual = 255,
 }
 
-struct CmpResult {
+enum CmpResult {
+    Equal(Cmp),
+    NotEqual(Cmp),
+}
+
+struct Cmp {
     msg: String,
     file_hash: String,
     expected_hash: String,
@@ -21,13 +29,13 @@ fn print_help() {
     println!("  -q: quiet mode");
 }
 
-fn print_verbose(cmp_result: &CmpResult) {
+fn print_verbose(cmp_result: &Cmp) {
     println!("{}", cmp_result.msg);
     println!("Found   :: {}", cmp_result.file_hash);
     println!("Expected:: {}", cmp_result.expected_hash);
 }
 
-fn print_quiet(cmp_result: &CmpResult) {
+fn print_quiet(cmp_result: &Cmp) {
     println!("{}", cmp_result.file_hash);
     println!("{}", cmp_result.expected_hash);
 }
@@ -66,9 +74,9 @@ fn get_file_hash256(path: String) -> Result<String, Box<dyn Error>> {
     Ok(format!("{:x}", hash256))
 }
 
-fn hash_cmp(a: String, b: String) -> Result<CmpResult, CmpResult> {
+fn hash_cmp(a: String, b: String) -> CmpResult {
     if a.len() != b.len() {
-        return Err(CmpResult {
+        return CmpResult::NotEqual(Cmp {
             msg: "Hash lengths do not match!".to_string(),
             file_hash: a,
             expected_hash: b,
@@ -82,19 +90,19 @@ fn hash_cmp(a: String, b: String) -> Result<CmpResult, CmpResult> {
         if a == b {
             cmp_marker = format!("{}{}", cmp_marker, b as char);
         } else {
-            cmp_marker = format!("{}\x1b[31m{}\x1b[0m", cmp_marker, b as char);
+            cmp_marker = format!("{}{COLOR_RED}{}{COLOR_WHITE}", cmp_marker, b as char);
             is_equal = false;
         }
     }
 
     if is_equal {
-        Ok(CmpResult {
+        CmpResult::Equal(Cmp {
             msg: "Hashes are equal!".to_string(),
             file_hash: a,
             expected_hash: cmp_marker,
         })
     } else {
-        Err(CmpResult {
+        CmpResult::NotEqual(Cmp {
             msg: "Hashes are not equal!".to_string(),
             file_hash: a,
             expected_hash: cmp_marker,
@@ -118,19 +126,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     match hash_cmp(file_hash, expected_hash) {
-        Ok(msg) => {
+        CmpResult::Equal(cmp) => {
             if quiet {
-                print_quiet(&msg);
+                print_quiet(&cmp);
             } else {
-                print_verbose(&msg);
+                print_verbose(&cmp);
             }
             process::exit(ExitCode::HashEqual as i32);
         }
-        Err(msg) => {
+        CmpResult::NotEqual(cmp) => {
             if quiet {
-                print_quiet(&msg);
+                print_quiet(&cmp);
             } else {
-                print_verbose(&msg);
+                print_verbose(&cmp);
             }
             process::exit(ExitCode::HashNotEqual as i32);
         }
