@@ -30,5 +30,5 @@ Calculate and compare hash values quickly and easily
 - a man page
 
 ## Notes
-Theres currently a [fork (by Throge2)](https://github.com/Thorge2/hash-cmp) which is a little more advanced.
+Theres currently a [fork (by Thorge2)](https://github.com/Thorge2/hash-cmp) which is a little more advanced.
 
