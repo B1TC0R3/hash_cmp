@@ -16,7 +16,7 @@ enum CmpResult {
 
 struct CmpData {
     msg: String,
-    file_path: String,
+    file_hash: String,
     expected_hash: String,
 }
 
@@ -26,15 +26,15 @@ fn print_help() {
     println!("  -q: quiet mode");
 }
 
-fn print_verbose(cmp_result: &CmpResult) {
-    println!("{}", cmp_result.msg);
-    println!("Found   :: {}", cmp_result.file_hash);
-    println!("Expected:: {}", cmp_result.expected_hash);
+fn print_verbose(cmp_data: &CmpData) {
+    println!("{}", cmp_data.msg);
+    println!("Found   :: {}", cmp_data.file_hash);
+    println!("Expected:: {}", cmp_data.expected_hash);
 }
 
-fn print_quiet(cmp_result: &CmpResult) {
-    println!("{}", cmp_result.file_hash);
-    println!("{}", cmp_result.expected_hash);
+fn print_quiet(cmp_data: &CmpData) {
+    println!("{}", cmp_data.file_hash);
+    println!("{}", cmp_data.expected_hash);
 }
 
 fn parse_args(mut args: Vec<String>) -> Result<(String, String, bool), Box<dyn Error>> {
