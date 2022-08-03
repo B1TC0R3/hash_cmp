@@ -4,6 +4,14 @@ use sha2::{Digest, Sha224, Sha256, Sha384, Sha512};
 use std::error::Error;
 use std::{env, fs, io, process};
 
+/*
+ * Hash legths:
+ * - SHA-224: 56 bytes
+ * - SHA-256: 64 bytes
+ * - SHA-384: 96 bytes
+ * - SHA-512: 128 bytes
+ * */
+
 enum ExitCode {
     HashEqual = 0,
     HashNotEqual = 255,
@@ -18,6 +26,19 @@ struct CmpData {
     msg: String,
     file_hash: String,
     expected_hash: String,
+}
+
+struct AutoSha {}
+impl AutoSha {
+    fn get_hash_func(hash: String) -> Result<(), String>{
+        match hash.len() {
+            56 => Ok(()),
+            64 => Ok(()),
+            96 => Ok(()),
+            128 => Ok(()),
+            _ => Err("\x1b[31mError\x1b[0m: Could not resolve hash function!".to_string())
+        }
+    } 
 }
 
 fn print_help() {
