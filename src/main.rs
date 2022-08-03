@@ -17,6 +17,13 @@ enum ExitCode {
     HashNotEqual = 255,
 }
 
+enum HashType {
+    Sha224,
+    Sha256,
+    Sha384,
+    Sha512,
+}
+
 enum CmpResult {
     Equal(CmpData),
     NotEqual(CmpData),
@@ -28,17 +35,22 @@ struct CmpData {
     expected_hash: String,
 }
 
-struct AutoSha {}
+struct AutoSha {
+    hash_type: HashType,
+    hash_len: usize,
+}
+
 impl AutoSha {
-    fn get_hash_func(hash: String) -> Result<(), String>{
-        match hash.len() {
-            56 => Ok(()),
-            64 => Ok(()),
-            96 => Ok(()),
-            128 => Ok(()),
-            _ => Err("\x1b[31mError\x1b[0m: Could not resolve hash function!".to_string())
+    fn new(hash: String) -> AutoSha{
+        AutoSha {
+            hash_type: HashType::Sha256, //base type on hash length
+            hash_len: hash.len(),
         }
     } 
+
+    //create wrappers for hasher functionality
+    //so the correct function will automatically by applied
+    //move all hash funcs into here
 }
 
 fn print_help() {
