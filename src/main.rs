@@ -1,6 +1,6 @@
 #![deny(clippy::pedantic)]
 
-use sha2::{Digest, Sha256};
+use sha2::{Digest, Sha224, Sha256, Sha384, Sha512};
 use std::error::Error;
 use std::{env, fs, io, process};
 
@@ -9,9 +9,14 @@ enum ExitCode {
     HashNotEqual = 255,
 }
 
-struct CmpResult {
+enum CmpResult {
+    Equal(CmpData),
+    NotEqual(CmpData),
+}
+
+struct CmpData {
     msg: String,
-    file_hash: String,
+    file_path: String,
     expected_hash: String,
 }
 
@@ -66,9 +71,9 @@ fn get_file_hash256(path: String) -> Result<String, Box<dyn Error>> {
     Ok(format!("{:x}", hash256))
 }
 
-fn hash_cmp(a: String, b: String) -> Result<CmpResult, CmpResult> {
+fn hash_cmp(a: String, b: String) -> CmpResult {
     if a.len() != b.len() {
-        return Err(CmpResult {
+        return CmpResult::NotEqual(CmpData {
             msg: "Hash lengths do not match!".to_string(),
             file_hash: a,
             expected_hash: b,
@@ -88,13 +93,13 @@ fn hash_cmp(a: String, b: String) -> Result<CmpResult, CmpResult> {
     }
 
     if is_equal {
-        Ok(CmpResult {
+        CmpResult::Equal(CmpData {
             msg: "Hashes are equal!".to_string(),
             file_hash: a,
             expected_hash: cmp_marker,
         })
     } else {
-        Err(CmpResult {
+        CmpResult::NotEqual(CmpData {
             msg: "Hashes are not equal!".to_string(),
             file_hash: a,
             expected_hash: cmp_marker,
@@ -118,19 +123,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     match hash_cmp(file_hash, expected_hash) {
-        Ok(msg) => {
+        CmpResult::Equal(data) => {
             if quiet {
-                print_quiet(&msg);
+                print_quiet(&data);
             } else {
-                print_verbose(&msg);
+                print_verbose(&data);
             }
             process::exit(ExitCode::HashEqual as i32);
         }
-        Err(msg) => {
+        CmpResult::NotEqual(data) => {
             if quiet {
-                print_quiet(&msg);
+                print_quiet(&data);
             } else {
-                print_verbose(&msg);
+                print_verbose(&data);
             }
             process::exit(ExitCode::HashNotEqual as i32);
         }
