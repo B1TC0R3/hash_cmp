@@ -67,13 +67,13 @@ impl AutoSha {
         format!{"{}", hash}
     }
 
-    fn calc_hash_from_file<T: Digest + std::io::Write>(&self, file_path: String) -> Result<String, Box<dyn Error>>
-    where T::OutputSize: ArrayLength<u8> + 'static {
+    fn calc_hash_from_file<T: Digest + std::io::Write>(&self, file_path: String) -> Result<String, Box<dyn Error>> {
         let mut hasher: T = T::new();
         let mut file = fs::File::open(file_path)?;
 
         io::copy(&mut file, &mut hasher)?;
         let hash = hasher.finalize();
+
         Ok(format!("{:x}", hash))
     }
 
