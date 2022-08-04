@@ -49,11 +49,20 @@ impl AutoSha {
     } 
 
     fn get_hash(&self, file_path: String) -> String {
-        let hash = match self.hash_type {
+        let hash_result = match self.hash_type {
             HashType::Sha224 => self.calc_hash_from_file::<Sha224>(file_path),
             HashType::Sha256 => self.calc_hash_from_file::<Sha256>(file_path),
             HashType::Sha384 => self.calc_hash_from_file::<Sha384>(file_path),
             HashType::Sha512 => self.calc_hash_from_file::<Sha512>(file_path)
+        };
+
+        let hash = match hash_result {
+            Ok(hash) => hash,
+            Err(_) => panic!("Expected hash does not fit any known hash methods.") //TODO replace
+                                                                                   //this with
+                                                                                   //better error
+                                                                                   //handling
+                                                                                   
         };
 
         format!{"{}", hash}
