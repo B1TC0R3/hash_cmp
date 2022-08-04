@@ -28,7 +28,3 @@ Calculate and compare hash values quickly and easily
 - Automatically figure out suitable hash-functions based on hash length
 - optimized source code
 - a man page
-
-## Notes
-Theres currently a [fork (by Thorge2)](https://github.com/Thorge2/hash-cmp) which is a little more advanced.
-

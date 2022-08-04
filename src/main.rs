@@ -56,7 +56,7 @@ impl AutoSha {
             HashType::Sha512 => self.calc_hash_from_file::<Sha512>(file_path)
         };
 
-        "Not implemented yet".to_string()
+        format!{"{}", hash}
     }
 
     fn calc_hash_from_file<T: Digest + std::io::Write>(&self, file_path: String) -> Result<String, Box<dyn Error>> {
@@ -64,7 +64,6 @@ impl AutoSha {
         let mut file = fs::File::open(file_path)?;
 
         io::copy(&mut file, &mut hasher)?;
-        let hash = hasher.finalize();
         Ok(format!("{:x}", hasher.finalize()))
     }
 
