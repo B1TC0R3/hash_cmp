@@ -48,6 +48,25 @@ impl AutoSha {
         }
     } 
 
+    fn get_hash(&self, file_path: String) -> String {
+        let hash = match self.hash_type {
+            HashType::Sha224 => self.calc_hash_from_file::<Sha224>(file_path),
+            HashType::Sha256 => self.calc_hash_from_file::<Sha256>(file_path),
+            HashType::Sha384 => self.calc_hash_from_file::<Sha384>(file_path),
+            HashType::Sha512 => self.calc_hash_from_file::<Sha512>(file_path)
+        };
+
+        "Not implemented yet".to_string()
+    }
+
+    fn calc_hash_from_file<T>(&self, file_path: String) -> Result<String, Box<dyn Error>>{
+        let mut hasher = T::new();
+        let mut file = fs::File::open(file_path)?;
+        io::copy(&mut file, &mut hasher)?;
+        let hash = hasher.finalize();
+        Ok(format!("{:x}", hash))
+    }
+
     //create wrappers for hasher functionality
     //so the correct function will automatically by applied
     //move all hash funcs into here
