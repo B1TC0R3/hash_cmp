@@ -62,7 +62,6 @@ impl AutoSha {
                                                                                    //this with
                                                                                    //better error
                                                                                    //handling
-                                                                                   
         };
 
         format!{"{}", hash}
