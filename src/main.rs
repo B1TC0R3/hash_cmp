@@ -70,8 +70,6 @@ impl AutoSha {
         format!{"{}", hash}
     }
 
-    //This servers as a very easy implementation for demonstrational purposes
-    //This main version uses generics
     fn calc_hash<T: Digest + io::Write>(&self, file_path: String) -> Result<String, Box<dyn Error>> {
         let mut hasher = T::new();
         let mut file = fs::File::open(file_path)?;
