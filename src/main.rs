@@ -77,9 +77,14 @@ impl AutoSha {
         io::copy(&mut file, &mut hasher)?;
         let hash = hasher.finalize();
 
-        Ok(format!("{:x}", hash))
+        let mut hash_string = "".to_string();
+        for byte in hash.iter() {
+            hash_string = format!("{}{:02x}", hash_string, byte);
+        }
+        Ok(hash_string)
     }
 }
+
 
 fn print_help() {
     println!("Usage: hash-cmp [optional: -q] <input-file> <expected hash>");
@@ -121,15 +126,6 @@ fn parse_args(mut args: Vec<String>) -> Result<(String, String, bool), Box<dyn E
         return Ok((args.pop().unwrap(), args.pop().unwrap(), quiet));
     }
     Err("Invalid Arguments!".into())
-}
-
-fn get_file_hash256(path: String) -> Result<String, Box<dyn Error>> {
-    let mut hasher = Sha256::new();
-    let mut file = fs::File::open(path)?;
-    io::copy(&mut file, &mut hasher)?;
-    let hash256 = hasher.finalize();
-
-    Ok(format!("{:x}", hash256))
 }
 
 fn hash_cmp(a: String, b: String) -> CmpResult {
