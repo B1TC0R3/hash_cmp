@@ -55,10 +55,10 @@ impl AutoSha {
 
     fn get_hash(&self, file_path: String) -> String {
         let hash_result = match self.hash_type {
-            HashType::Sha224 => self.calc_sha224(file_path),
-            HashType::Sha256 => self.calc_sha256(file_path),
-            HashType::Sha384 => self.calc_sha384(file_path),
-            HashType::Sha512 => self.calc_sha512(file_path),
+            HashType::Sha224 => self.calc_hash::<Sha224>(file_path),
+            HashType::Sha256 => self.calc_hash::<Sha256>(file_path),
+            HashType::Sha384 => self.calc_hash::<Sha384>(file_path),
+            HashType::Sha512 => self.calc_hash::<Sha512>(file_path),
             HashType::Unknown => panic!("Expected hash is of unknown type.")
         };
 
@@ -72,38 +72,8 @@ impl AutoSha {
 
     //This servers as a very easy implementation for demonstrational purposes
     //This main version uses generics
-    fn calc_sha224(&self, file_path: String) -> Result<String, Box<dyn Error>> {
-        let mut hasher = Sha224::new();
-        let mut file = fs::File::open(file_path)?;
-
-        io::copy(&mut file, &mut hasher)?;
-        let hash = hasher.finalize();
-
-        Ok(format!("{:x}", hash))
-    }
-
-    fn calc_sha256(&self, file_path: String) -> Result<String, Box<dyn Error>> {
-        let mut hasher = Sha256::new();
-        let mut file = fs::File::open(file_path)?;
-
-        io::copy(&mut file, &mut hasher)?;
-        let hash = hasher.finalize();
-
-        Ok(format!("{:x}", hash))
-    }
-
-    fn calc_sha384(&self, file_path: String) -> Result<String, Box<dyn Error>> {
-        let mut hasher = Sha384::new();
-        let mut file = fs::File::open(file_path)?;
-
-        io::copy(&mut file, &mut hasher)?;
-        let hash = hasher.finalize();
-
-        Ok(format!("{:x}", hash))
-    }
-
-    fn calc_sha512(&self, file_path: String) -> Result<String, Box<dyn Error>> {
-        let mut hasher = Sha512::new();
+    fn calc_hash<T: Digest + io::Write>(&self, file_path: String) -> Result<String, Box<dyn Error>> {
+        let mut hasher = T::new();
         let mut file = fs::File::open(file_path)?;
 
         io::copy(&mut file, &mut hasher)?;
