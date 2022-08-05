@@ -58,22 +58,17 @@ impl AutoSha {
 
     fn get_hash(&self, file_path: String) -> String {
         let hash_result = match self.hash_type {
-            HashType::Sha224 => self.calc_hash::<Sha224>(file_path),
-            HashType::Sha256 => self.calc_hash::<Sha256>(file_path),
-            HashType::Sha384 => self.calc_hash::<Sha384>(file_path),
-            HashType::Sha512 => self.calc_hash::<Sha512>(file_path),
+            HashType::Sha224 => Self::calc_hash::<Sha224>(file_path),
+            HashType::Sha256 => Self::calc_hash::<Sha256>(file_path),
+            HashType::Sha384 => Self::calc_hash::<Sha384>(file_path),
+            HashType::Sha512 => Self::calc_hash::<Sha512>(file_path),
             HashType::Unknown => panic!("Expected hash is of unknown type."),
         };
 
-        let hash = match hash_result {
-            Ok(val) => val,
-            Err(_) => panic!("Hash does not match known hash function."),
-        };
-
-        format! {"{}", hash}
+        hash_result.expect("Hash does not match known hash function.")
     }
 
-    fn calc_hash<T>(&self, file_path: String) -> Result<String, Box<dyn Error>>
+    fn calc_hash<T>(file_path: String) -> Result<String, Box<dyn Error>>
     where
         T: Digest + io::Write,
         <T as OutputSizeUser>::OutputSize: Add,
@@ -169,21 +164,11 @@ fn hash_cmp(a: String, b: String) -> CmpResult {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
-    let auto_sha: AutoSha;
-    let file_hash: String;
-    let expected_hash: String;
-    let quiet: bool;
 
-    match parse_args(args) {
-        Err(e) => return Err(e),
-        Ok((hash, file_path, mode)) => {
-            auto_sha = AutoSha::new(hash.len());
-            file_hash = auto_sha.get_hash(file_path);
-            expected_hash = hash;
-            quiet = mode;
-        }
-    }
+    let (expected_hash, file_path, quiet) = parse_args(args)?;
+    let file_hash = AutoSha::new(expected_hash.len()).get_hash(file_path);
 
+    #[allow(clippy::match_bool)]
     match hash_cmp(file_hash, expected_hash) {
         CmpResult::Equal(data) => {
             match quiet {
