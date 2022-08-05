@@ -51,7 +51,7 @@ impl AutoSha {
                 _ => HashType::Unknown
             }
         }
-    } 
+    }
 
     fn get_hash(&self, file_path: String) -> String {
         let hash_result = match self.hash_type {
