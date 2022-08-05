@@ -3,13 +3,17 @@
 Calculate and compare hash values quickly and easily
 
 ## Supported Hashing Algorithms
+- Sha224
 - Sha256
+- Sha384
+- Sha512
 
 ## How to use
 ```bash
 ./hash-cmp -h
 ./hash-cmp [optional: -q (quiet mode)] <file path> <expected hash>
 ```
+The application will figure out which hash method to use based on the expected hash.
 
 ## Exit codes
 - **0**: Hashes are equal
@@ -24,7 +28,5 @@ Calculate and compare hash values quickly and easily
 
 
 ## Roadmap
-- Support multiple hash functions
-- Automatically figure out suitable hash-functions based on hash length
 - optimized source code
 - a man page
