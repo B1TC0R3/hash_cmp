@@ -75,16 +75,15 @@ impl AutoSha {
         let mut file = fs::File::open(file_path)?;
 
         io::copy(&mut file, &mut hasher)?;
-        let hash = hasher.finalize();
 
-        let mut hash_string = "".to_string();
+        let hash = hasher.finalize();
+        let mut hash_string = String::new();
         for byte in hash.iter() {
             hash_string = format!("{}{:02x}", hash_string, byte);
         }
         Ok(hash_string)
     }
 }
-
 
 fn print_help() {
     println!("Usage: hash-cmp [optional: -q] <input-file> <expected hash>");
@@ -183,18 +182,16 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     match hash_cmp(file_hash, expected_hash) {
         CmpResult::Equal(data) => {
-            if quiet {
-                print_quiet(&data);
-            } else {
-                print_verbose(&data);
+            match quiet {
+                true => print_quiet(&data),
+                false => print_verbose(&data),
             }
             process::exit(ExitCode::HashEqual as i32);
         }
         CmpResult::NotEqual(data) => {
-            if quiet {
-                print_quiet(&data);
-            } else {
-                print_verbose(&data);
+            match quiet {
+                true => print_quiet(&data),
+                false => print_verbose(&data),
             }
             process::exit(ExitCode::HashNotEqual as i32);
         }
