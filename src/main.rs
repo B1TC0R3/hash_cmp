@@ -1,7 +1,10 @@
 #![deny(clippy::pedantic)]
 
+use sha2::digest::generic_array::ArrayLength;
+use sha2::digest::OutputSizeUser;
 use sha2::{Digest, Sha224, Sha256, Sha384, Sha512};
 use std::error::Error;
+use std::ops::Add;
 use std::{env, fs, io, process};
 
 /*
@@ -41,15 +44,15 @@ struct AutoSha {
 }
 
 impl AutoSha {
-    fn new(hash_size: usize) -> AutoSha{
+    fn new(hash_size: usize) -> AutoSha {
         AutoSha {
             hash_type: match hash_size {
                 56 => HashType::Sha224,
                 64 => HashType::Sha256,
                 96 => HashType::Sha384,
                 128 => HashType::Sha512,
-                _ => HashType::Unknown
-            }
+                _ => HashType::Unknown,
+            },
         }
     }
 
@@ -59,29 +62,30 @@ impl AutoSha {
             HashType::Sha256 => self.calc_hash::<Sha256>(file_path),
             HashType::Sha384 => self.calc_hash::<Sha384>(file_path),
             HashType::Sha512 => self.calc_hash::<Sha512>(file_path),
-            HashType::Unknown => panic!("Expected hash is of unknown type.")
+            HashType::Unknown => panic!("Expected hash is of unknown type."),
         };
 
         let hash = match hash_result {
             Ok(val) => val,
-            Err(_) => panic!("Hash does not match known hash function.")
+            Err(_) => panic!("Hash does not match known hash function."),
         };
 
-        format!{"{}", hash}
+        format! {"{}", hash}
     }
 
-    fn calc_hash<T: Digest + io::Write>(&self, file_path: String) -> Result<String, Box<dyn Error>> {
+    fn calc_hash<T>(&self, file_path: String) -> Result<String, Box<dyn Error>>
+    where
+        T: Digest + io::Write,
+        <T as OutputSizeUser>::OutputSize: Add,
+        <<T as OutputSizeUser>::OutputSize as Add>::Output: ArrayLength<u8>,
+    {
         let mut hasher = T::new();
         let mut file = fs::File::open(file_path)?;
 
         io::copy(&mut file, &mut hasher)?;
 
         let hash = hasher.finalize();
-        let mut hash_string = String::new();
-        for byte in hash.iter() {
-            hash_string = format!("{}{:02x}", hash_string, byte);
-        }
-        Ok(hash_string)
+        Ok(format!("{hash:x}"))
     }
 }
 
