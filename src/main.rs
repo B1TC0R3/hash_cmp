@@ -55,22 +55,20 @@ impl AutoSha {
 
     fn get_hash(&self, file_path: String) -> String {
         let hash_result = match self.hash_type {
-            HashType::Sha224 => self.calc_hash::<Sha224>(file_path),
-            HashType::Sha256 => self.calc_hash::<Sha256>(file_path),
-            HashType::Sha384 => self.calc_hash::<Sha384>(file_path),
-            HashType::Sha512 => self.calc_hash::<Sha512>(file_path),
+            HashType::Sha224 => AutoSha::calc_hash::<Sha224>(file_path),
+            HashType::Sha256 => AutoSha::calc_hash::<Sha256>(file_path),
+            HashType::Sha384 => AutoSha::calc_hash::<Sha384>(file_path),
+            HashType::Sha512 => AutoSha::calc_hash::<Sha512>(file_path),
             HashType::Unknown => panic!("Expected hash is of unknown type.")
         };
 
-        let hash = match hash_result {
+        match hash_result {
             Ok(val) => val,
-            Err(_) => panic!("Hash does not match known hash function.")
-        };
-
-        format!{"{}", hash}
+            _ => panic!("Hash does not match known hash function.")
+        }
     }
 
-    fn calc_hash<T: Digest + io::Write>(&self, file_path: String) -> Result<String, Box<dyn Error>> {
+    pub(self) fn calc_hash<T: Digest + io::Write>(file_path: String) -> Result<String, Box<dyn Error>> {
         let mut hasher = T::new();
         let mut file = fs::File::open(file_path)?;
 
@@ -182,16 +180,18 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     match hash_cmp(file_hash, expected_hash) {
         CmpResult::Equal(data) => {
-            match quiet {
-                true => print_quiet(&data),
-                false => print_verbose(&data),
+            if quiet {
+                print_quiet(&data);
+            } else {
+                print_verbose(&data);
             }
             process::exit(ExitCode::HashEqual as i32);
         }
         CmpResult::NotEqual(data) => {
-            match quiet {
-                true => print_quiet(&data),
-                false => print_verbose(&data),
+            if quiet {
+                print_quiet(&data);
+            } else {
+                print_verbose(&data);
             }
             process::exit(ExitCode::HashNotEqual as i32);
         }
