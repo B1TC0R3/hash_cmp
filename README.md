@@ -28,5 +28,6 @@ The application will figure out which hash method to use based on the expected h
 
 
 ## Roadmap
-- optimized source code
+- a better readme page
 - a man page
+- a pacman package
