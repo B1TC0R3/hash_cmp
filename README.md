@@ -36,5 +36,4 @@ on the correct value to calculate autonomously.
 
 
 ## Roadmap
-- a man page
 - a pacman package
