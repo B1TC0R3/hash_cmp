@@ -36,4 +36,4 @@ on the correct value to calculate autonomously.
 
 
 ## Roadmap
-- a pacman package
+- a AUR package
