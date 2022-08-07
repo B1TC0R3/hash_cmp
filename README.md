@@ -1,6 +1,15 @@
 # hash-cmp
 ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)\
-Calculate and compare hash values quickly and easily
+Calculate and compare hash values quickly and easily.\
+Varifying the integrity of files is somewhat tedious, as be default,
+one has to calculate the file hash and then compare it to whatever they expected 
+it to be manually.\
+This tool makes this comparison a little more comfortable by *automatically calculating*
+the hash value of a file, *comparing* it with the expected value and *highlighting* the differences in color.
+
+Additionally, the tool supports multiple different hash functions.\
+It will detect which hash method was used to create the expected hash value and decide
+on the correct value to calculate autonomously.
 
 ## Supported Hashing Algorithms
 - Sha224
@@ -13,7 +22,6 @@ Calculate and compare hash values quickly and easily
 ./hash-cmp -h
 ./hash-cmp [optional: -q (quiet mode)] <file path> <expected hash>
 ```
-The application will figure out which hash method to use based on the expected hash.
 
 ## Exit codes
 - **0**: Hashes are equal
@@ -28,5 +36,5 @@ The application will figure out which hash method to use based on the expected h
 
 
 ## Roadmap
-- optimized source code
 - a man page
+- a pacman package
