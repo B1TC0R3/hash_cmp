@@ -7,36 +7,19 @@ use std::error::Error;
 use std::ops::Add;
 use std::{env, fs, io, process};
 
-/*
- * Hash legths:
- * - SHA-224: 56 bytes
- * - SHA-256: 64 bytes
- * - SHA-384: 96 bytes
- * - SHA-512: 128 bytes
- * */
-
-enum ExitCode {
-    HashEqual = 0,
-    HashNotEqual = 255,
-}
-
 enum HashType {
-    Sha224,
-    Sha256,
-    Sha384,
-    Sha512,
+    Sha224 = 224,
+    Sha256 = 256,
+    Sha384 = 384,
+    Sha512 = 512,
     Unknown,
 }
 
-enum CmpResult {
-    Equal(CmpData),
-    NotEqual(CmpData),
-}
-
-struct CmpData {
+struct CmpResult {
     msg: String,
     file_hash: String,
     expected_hash: String,
+    exit_code: i32,
 }
 
 struct AutoSha {
@@ -62,10 +45,10 @@ impl AutoSha {
             HashType::Sha256 => Self::calc_hash::<Sha256>(file_path),
             HashType::Sha384 => Self::calc_hash::<Sha384>(file_path),
             HashType::Sha512 => Self::calc_hash::<Sha512>(file_path),
-            HashType::Unknown => panic!("Expected hash is of unknown type."),
+            HashType::Unknown => panic!(),
         };
 
-        hash_result.expect("Hash does not match known hash function.")
+        hash_result.expect("Hash does not match any known hash function.")
     }
 
     fn calc_hash<T>(file_path: String) -> Result<String, Box<dyn Error>>
@@ -90,15 +73,15 @@ fn print_help() {
     println!("  -q: quiet mode");
 }
 
-fn print_verbose(cmp_data: &CmpData) {
-    println!("{}", cmp_data.msg);
-    println!("Found   :: {}", cmp_data.file_hash);
-    println!("Expected:: {}", cmp_data.expected_hash);
+fn print_verbose(cmp_result: &CmpResult) {
+    println!("{}", cmp_result.msg);
+    println!("Found   :: {}", cmp_result.file_hash);
+    println!("Expected:: {}", cmp_result.expected_hash);
 }
 
-fn print_quiet(cmp_data: &CmpData) {
-    println!("{}", cmp_data.file_hash);
-    println!("{}", cmp_data.expected_hash);
+fn print_quiet(cmp_result: &CmpResult) {
+    println!("{}", cmp_result.file_hash);
+    println!("{}", cmp_result.expected_hash);
 }
 
 fn parse_args(mut args: Vec<String>) -> Result<(String, String, bool), Box<dyn Error>> {
@@ -128,11 +111,12 @@ fn parse_args(mut args: Vec<String>) -> Result<(String, String, bool), Box<dyn E
 
 fn hash_cmp(a: String, b: String) -> CmpResult {
     if a.len() != b.len() {
-        return CmpResult::NotEqual(CmpData {
+        return CmpResult {
             msg: "Hash lengths do not match!".to_string(),
             file_hash: a,
             expected_hash: b,
-        });
+            exit_code: 999,
+        };
     }
 
     let mut is_equal: bool = true;
@@ -148,17 +132,19 @@ fn hash_cmp(a: String, b: String) -> CmpResult {
     }
 
     if is_equal {
-        CmpResult::Equal(CmpData {
+        CmpResult {
             msg: "Hashes are equal!".to_string(),
             file_hash: a,
             expected_hash: cmp_marker,
-        })
+            exit_code: 0,
+        }
     } else {
-        CmpResult::NotEqual(CmpData {
+        CmpResult {
             msg: "Hashes are not equal!".to_string(),
             file_hash: a,
             expected_hash: cmp_marker,
-        })
+            exit_code: 255,
+        }
     }
 }
 
@@ -168,22 +154,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     let (expected_hash, file_path, quiet) = parse_args(args)?;
     let file_hash = AutoSha::new(expected_hash.len()).get_hash(file_path);
 
-    match hash_cmp(file_hash, expected_hash) {
-        CmpResult::Equal(data) => {
-            if quiet {
-                print_quiet(&data);
-            } else {
-                print_verbose(&data);
-            }
-            process::exit(ExitCode::HashEqual as i32);
-        }
-        CmpResult::NotEqual(data) => {
-            if quiet {
-                print_quiet(&data);
-            } else {
-                print_verbose(&data);
-            }
-            process::exit(ExitCode::HashNotEqual as i32);
-        }
+    let cmp_result: CmpResult = hash_cmp(file_hash, expected_hash);
+    if !quiet {
+        print_verbose(&cmp_result);
+    } else {
+        print_quiet(&cmp_result);
     }
+
+    process::exit(cmp_result.exit_code);
 }
