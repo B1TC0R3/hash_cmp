@@ -45,10 +45,10 @@ impl AutoSha {
             HashType::Sha256 => Self::calc_hash::<Sha256>(file_path),
             HashType::Sha384 => Self::calc_hash::<Sha384>(file_path),
             HashType::Sha512 => Self::calc_hash::<Sha512>(file_path),
-            HashType::Unknown => panic!(),
+            HashType::Unknown => Ok("[\x1b[31m\x1b[1mERROR\x1b[0m] Failed to determine hash method from expected hash!".to_string()),
         };
 
-        hash_result.expect("Hash does not match any known hash function.")
+        hash_result.unwrap()
     }
 
     fn calc_hash<T>(file_path: String) -> Result<String, Box<dyn Error>>
@@ -115,7 +115,7 @@ fn hash_cmp(a: String, b: String) -> CmpResult {
             msg: "Hash lengths do not match!".to_string(),
             file_hash: a,
             expected_hash: b,
-            exit_code: 999,
+            exit_code: -99,
         };
     }
 
