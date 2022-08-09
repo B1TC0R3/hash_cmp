@@ -25,12 +25,9 @@ on the correct value to calculate autonomously.
 
 ## Exit codes
 
-**This section is currently outdated!**
-This will be fixed soon.
-
 - **0**: Hashes are equal
-- **255**: Hashes are not equal
-- **999**: Hashes are not equal in length
+- **300**: Failed to detect hash method
+- **400**: Hashes are not equal
 
 ## Example
 ### Verbose mode

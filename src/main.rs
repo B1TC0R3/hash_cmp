@@ -8,10 +8,10 @@ use std::ops::Add;
 use std::{env, fs, io, process};
 
 enum HashType {
-    Sha224 = 224,
-    Sha256 = 256,
-    Sha384 = 384,
-    Sha512 = 512,
+    Sha224,
+    Sha256,
+    Sha384,
+    Sha512,
     Unknown,
 }
 
@@ -115,7 +115,7 @@ fn hash_cmp(a: String, b: String) -> CmpResult {
             msg: "Hash lengths do not match!".to_string(),
             file_hash: a,
             expected_hash: b,
-            exit_code: -99,
+            exit_code: 300,
         };
     }
 
@@ -143,7 +143,7 @@ fn hash_cmp(a: String, b: String) -> CmpResult {
             msg: "Hashes are not equal!".to_string(),
             file_hash: a,
             expected_hash: cmp_marker,
-            exit_code: 255,
+            exit_code: 400,
         }
     }
 }

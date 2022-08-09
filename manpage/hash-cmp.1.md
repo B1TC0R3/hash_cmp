@@ -31,7 +31,10 @@ Supported hash functions are:\
 **0**
 : the calculated hash matches the expected hash
 
-**255**
+**300**
+: Failed to detect hash method
+
+**400**
 : the calculated hash does NOT match the expected hash
 
 # EXAMPLES
