@@ -1,4 +1,4 @@
-% hash-cmp(1) hash-cmp 3.0.0
+% hash-cmp(1) hash-cmp 4.0.0
 % Thomas Gingele (https://github.com/B1TC0R3)
 % August 2022
 
