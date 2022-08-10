@@ -58,7 +58,7 @@ dependencies = [
 
 [[package]]
 name = "hash-cmp"
-version = "2.0.0"
+version = "4.0.0"
 dependencies = [
  "hex-literal",
  "sha2",

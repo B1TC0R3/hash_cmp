@@ -1,6 +1,11 @@
 [package]
 name = "hash-cmp"
-version = "2.0.0"
+authors = ["Thomas Gingele (https://github.com/B1TC0R3)"]
+description = "Validates the hash of a file against a known hash"
+homepage = "https://github.com/B1TC0R3/hash-cmp"
+repository = "https://github.com/B1TC0R3/hash-cmp"
+license = "GPL-3.0"
+version = "4.0.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
