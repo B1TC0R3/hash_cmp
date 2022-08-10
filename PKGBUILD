@@ -12,7 +12,7 @@ arch=("x86_64")
 provides=("hash-cmp")
 conflicts=("hash-cmp")
 source=("https://github.com/B1TC0R3/hash-cmp/releases/download/v$pkgver/hash-cmp-$pkgver-x86_64.tar.gz")
-sha256sums=("7ebd00f601ab2b239987068c32ccdb089320e6adff2e4ffbd1cf78bcec0b5a5b")
+sha256sums=("4bc22121ac37f999e5ae48ee77bcb1d65b28698fb91843b1e1e8bf9365c17f73")
 
 package() {
     install -Dm755 hash-cmp -t "$pkgdir/usr/bin"
