@@ -17,4 +17,5 @@ sha256sums=("4bc22121ac37f999e5ae48ee77bcb1d65b28698fb91843b1e1e8bf9365c17f73")
 package() {
     install -Dm755 hash-cmp -t "$pkgdir/usr/bin"
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 hash-cmp.1.gz "$pkgdir/usr/man/man1/hash-cmp.1.gz"
 }
