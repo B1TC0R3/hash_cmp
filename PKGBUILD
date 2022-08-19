@@ -12,10 +12,10 @@ arch=("x86_64")
 provides=("hash-cmp")
 conflicts=("hash-cmp")
 source=("https://github.com/B1TC0R3/hash-cmp/releases/download/v$pkgver/hash-cmp-$pkgver-x86_64.tar.gz")
-sha256sums=("4bc22121ac37f999e5ae48ee77bcb1d65b28698fb91843b1e1e8bf9365c17f73")
+sha256sums=("962aa11b414482b8a0da40d6b8c4793fadc5a62bd69f2fd89b7693034d43202e")
 
 package() {
-    install -Dm755 hash-cmp -t "$pkgdir/usr/bin"
+    install -Dm755 target/release/hash-cmp -t "$pkgdir/usr/bin/hash-cmp"
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
     install -Dm644 hash-cmp.1.gz "$pkgdir/usr/share/man/man1/hash-cmp.1.gz"
 }
