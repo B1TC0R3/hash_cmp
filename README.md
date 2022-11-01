@@ -38,4 +38,4 @@ on the correct value to calculate autonomously.
 
 
 ## Roadmap
-- a AUR package (Currently WIP, will be released in version 4.0.0)
+- a AUR package
