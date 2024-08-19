@@ -1,7 +1,7 @@
 # hash-cmp
 ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)\
 Calculate and compare hash values quickly and easily.\
-Varifying the integrity of files is somewhat tedious, as be default,
+Verifying the integrity of files is somewhat tedious, as be default,
 one has to calculate the file hash and then compare it to whatever they expected 
 it to be manually.\
 This tool makes this comparison a little more comfortable by *automatically calculating*
